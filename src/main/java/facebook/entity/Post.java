@@ -1,27 +1,26 @@
-package day14.controller;
+package facebook.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@Entity
-@Table(name = "tweet_spring")
-public class Tweet {
-    //s
+@Entity(name = "Post")
+@Table(name = "post_spring")
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String tweet;
+    private String post;
     private String email;
     private Timestamp timestamp;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId")
     private User user;
 
-    public Tweet() {
+    public Post() {
     }
 
-    public Tweet(String tweet, Timestamp timestamp, User user, String email) {
-        this.tweet = tweet;
+    public Post(String post, Timestamp timestamp, User user, String email) {
+        this.post = post;
         this.timestamp = timestamp;
         this.user = user;
         this.email = email;
@@ -29,9 +28,9 @@ public class Tweet {
 
     @Override
     public String toString() {
-        return "Tweet{" +
+        return "Post{" +
                 "id=" + id +
-                ", tweet='" + tweet + '\'' +
+                ", post='" + post + '\'' +
                 ", email='" + email + '\'' +
                 ", timestamp=" + timestamp +
                 ", user=" + user +
@@ -50,12 +49,12 @@ public class Tweet {
         return id;
     }
 
-    public String getTweet() {
-        return tweet;
+    public String getpost() {
+        return post;
     }
 
-    public void setTweet(String tweet) {
-        this.tweet = tweet;
+    public void setpost(String post) {
+        this.post = post;
     }
 
     public void setId(Integer id) {
