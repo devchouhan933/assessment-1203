@@ -1,0 +1,22 @@
+<div>
+    <h> All post</h>
+    {{#posts}}
+        <p>{{user.email}}</p>
+        <p> {{post}}</p>
+    {{/posts}}
+    <form action="/post" method="post">
+        <label for="email">Email:</label><br>
+        <input type="text" name="email"><br>
+
+        <label for="password">Password:</label><br>
+        <input type="password" name="password"><br>
+
+
+        <label for="post">post:</label><br>
+        <textarea name="post">
+        </textarea>
+        <br>
+
+        <input type="submit"/>
+    </form>
+</div>

@@ -2,12 +2,19 @@
     <h1>User Profile</h1>
     <p>{{name}}</p>
     <p>{{email}}</p>
-    <form action="/tweets" method="get">
+    <form action="/getTweets" method="get">
         <input hidden name="email" value={{email}}>
         <input value="tweets" type="submit"/>
+        <input value="All users" type="submit"/>
     </form>
-    <form action="/fetchUser" method="get">
-        <input hidden name="email" value={{email}}>
-        <input value="users" type="submit"/>
+    <form action="/displayUserDetails" method="get">
+        <h1>{{email}}</h1>
+        <input type="hidden" name="email" value={{email}}>
+        <input value="users" type="submit">
     </form>
+    <form action="/follow" method="get">
+        <input type="hidden" name="email" value="{{email}}">
+        <input type="submit" value="My followers">
+    </form>
+
 </div>

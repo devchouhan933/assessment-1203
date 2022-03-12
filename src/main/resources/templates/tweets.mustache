@@ -3,19 +3,13 @@
     {{#tweets}}
         <p>{{tweet}}</p>
     {{/tweets}}
-    <form action="/tweet" method="post">
-        <label for="email">Email:</label><br>
-        <input type="text" name="email"><br>
-
-        <label for="password">Password:</label><br>
-        <input type="password" name="password"><br>
-
-
-        <label for="tweet">tweet:</label><br>
-        <textarea name="tweet" >
-        </textarea>
-            <br>
-
+    <h3>Add a new Tweet</h3>
+    <form action="/tweetnew" method="post">
+        <input type="hidden" name="email" value={{email}}>
+        <input type="hidden" name="password" value={{password}}>
+        <input type="hidden" name="name" value={{name}}>
+        <label for="tweet" name="tweet"></label><br>
+        <input type="text" name="tweet">
         <input type="submit"/>
     </form>
 </div>
