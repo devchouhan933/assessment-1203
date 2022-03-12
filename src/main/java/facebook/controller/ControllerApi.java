@@ -1,33 +1,137 @@
 package facebook.controller;
 
+import facebook.dao.FriendDao;
 import facebook.dao.PostDao;
 import facebook.dao.UserDao;
+import facebook.entity.Friend;
 import facebook.entity.Post;
 import facebook.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControllerApi {
-    private final Map<String, User> userProfile = new HashMap<>();
+    //private final Map<String, User> userProfile = new HashMap<>();
     @Autowired
     private UserDao userDao;
     @Autowired
     private PostDao postDao;
+    @Autowired
+    private FriendDao friendDao;
+
+
+    @GetMapping("/users")
+    public ModelAndView getUsers(@RequestParam String email) {
+        User user = userDao.readByEmail(email);
+//        if (user != null) {
+        List<User> users = userDao.readAll();
+        ModelAndView modelAndView = new ModelAndView("users");
+        modelAndView.getModel().put("users", users);
+        modelAndView.getModel().put("userPassword", user.getPassword());
+        modelAndView.getModel().put("userEmail", email);
+        return modelAndView;
+    }
+
+    @PostMapping("/friend")
+    public ModelAndView followUsers(@RequestBody MultiValueMap<String, String> requestBody) {
+        String email = requestBody.get("userEmail").get(0);
+        String friend_email = requestBody.get("friendEmail").get(0);
+        String password = requestBody.get("password").get(0);
+        System.out.println();
+        if (email != null && friend_email != null && !email.equals(friend_email)) {
+            User user = userDao.readByEmail(email);
+            User userFriend = userDao.readByEmail(friend_email);
+            if (user != null && userFriend != null && email.equals(user.getEmail()) && password.equals(user.getPassword())) {
+                List<Friend> friendsOfUser = friendDao.readAll(user.getId()).stream().filter(friend -> friend.getFriendId() == userFriend.getId()).collect(Collectors.toList());
+                if (friendsOfUser.size() == 0) {
+                    Friend friend = new Friend(userFriend.getId(), user);
+                    friendDao.create(friend);
+                    ModelAndView modelAndView = new ModelAndView("successFriend");
+                    return modelAndView;
+                }
+                return errorMessageModelAndView("You both are friends don't you know ");
+            }
+            return errorMessageModelAndView("Data mismatch");
+        }
+        return errorMessageModelAndView("Invalid Data ");
+    }
+
+
+
+
+
+/*
+    @PostMapping("/friend")
+    @ResponseBody
+    public ModelAndView followUsers(@RequestBody Map<String, String> requestBody) {
+        String email = requestBody.get("email");
+        String friendId = requestBody.get("friendId");
+        String password = requestBody.get("password");
+        Integer friend_id = userDao.readByEmail(email).getId();
+        Integer user_id = userDao.readByEmail(friendId).getId();
+
+        ModelAndView modelAndView = new ModelAndView("follower");
+        ModelAndView modelAndView1 = new ModelAndView("error");
+        //  System.out.println(list);
+        User userByEmail = userDao.readByEmail(email);
+        if (userByEmail != null) {
+            modelAndView1.getModel().put("error", "User doesn't exist");
+            return modelAndView1;
+        }
+        if (friendId.equals(email)) {
+            modelAndView1.getModel().put("error", "You cannot friend yourself");
+            return modelAndView1;
+        }
+
+        if (userByEmail.getPassword().equals(password)) {
+*/
+/*
+            if (list.contains(email)) {
+                friend.get(friend_id).add(user_id);
+                int id = userProfile.get(friend_id).getId();
+                Friend friend = new Friend();
+                friend.setFriendId(user_id);
+                friendDao.createMultiple(id, friend);
+                System.out.println("added bu if");
+            } else {
+                List<Integer> list1 = new ArrayList<>();
+                list1.add(user_id);
+                friend.put(friend_id, list1);
+                User user = userProfile.get(friendId);
+                Friend friend = new Friend(friend_id, user);
+                friendDao.create(friend);
+                System.out.println("added by else");
+            }
+            modelAndView.getModel().put("userId", user_id);
+            modelAndView.getModel().put("friendId", friend_id);
+            return modelAndView;
+*//*
+
+     */
+/*
+        } else {
+            modelAndView1.getModel().put("error", "Something went wrong");
+            return modelAndView1;
+        }
+*//*
+
+
+        }
+
+
+    }
+
+*/
 
     @PostMapping(value = "/registerHtml", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ModelAndView registerHtml() {
@@ -160,5 +264,5 @@ public class ControllerApi {
         return password.equals(user.getPassword());
     }
 
-
 }
+
