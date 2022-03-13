@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,6 @@ public class ControllerApi {
     @GetMapping("/users")
     public ModelAndView getUsers(@RequestParam String email) {
         User user = userDao.readByEmail(email);
-//        if (user != null) {
         List<User> users = userDao.readAll();
         ModelAndView modelAndView = new ModelAndView("users");
         modelAndView.getModel().put("users", users);
@@ -66,72 +66,6 @@ public class ControllerApi {
         return errorMessageModelAndView("Invalid Data ");
     }
 
-
-
-
-
-/*
-    @PostMapping("/friend")
-    @ResponseBody
-    public ModelAndView followUsers(@RequestBody Map<String, String> requestBody) {
-        String email = requestBody.get("email");
-        String friendId = requestBody.get("friendId");
-        String password = requestBody.get("password");
-        Integer friend_id = userDao.readByEmail(email).getId();
-        Integer user_id = userDao.readByEmail(friendId).getId();
-
-        ModelAndView modelAndView = new ModelAndView("follower");
-        ModelAndView modelAndView1 = new ModelAndView("error");
-        //  System.out.println(list);
-        User userByEmail = userDao.readByEmail(email);
-        if (userByEmail != null) {
-            modelAndView1.getModel().put("error", "User doesn't exist");
-            return modelAndView1;
-        }
-        if (friendId.equals(email)) {
-            modelAndView1.getModel().put("error", "You cannot friend yourself");
-            return modelAndView1;
-        }
-
-        if (userByEmail.getPassword().equals(password)) {
-*/
-/*
-            if (list.contains(email)) {
-                friend.get(friend_id).add(user_id);
-                int id = userProfile.get(friend_id).getId();
-                Friend friend = new Friend();
-                friend.setFriendId(user_id);
-                friendDao.createMultiple(id, friend);
-                System.out.println("added bu if");
-            } else {
-                List<Integer> list1 = new ArrayList<>();
-                list1.add(user_id);
-                friend.put(friend_id, list1);
-                User user = userProfile.get(friendId);
-                Friend friend = new Friend(friend_id, user);
-                friendDao.create(friend);
-                System.out.println("added by else");
-            }
-            modelAndView.getModel().put("userId", user_id);
-            modelAndView.getModel().put("friendId", friend_id);
-            return modelAndView;
-*//*
-
-     */
-/*
-        } else {
-            modelAndView1.getModel().put("error", "Something went wrong");
-            return modelAndView1;
-        }
-*//*
-
-
-        }
-
-
-    }
-
-*/
 
     @PostMapping(value = "/registerHtml", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ModelAndView registerHtml() {
@@ -214,19 +148,55 @@ public class ControllerApi {
         return errorMessageModelAndView("No pos available yet");
     }
 
-    @GetMapping("/posts/{email}")
-    private ModelAndView getPostByEmail(@PathVariable String email) {
-        if (userDao.readByEmail(email) != null) {
 
-            List<Post> allPostByEmail = postDao.findAllPostByEmail(email);
-            if (allPostByEmail.size() > 0) {
-                ModelAndView modelAndView = new ModelAndView("posts");
-                modelAndView.getModel().put("posts", allPostByEmail);
-                return modelAndView;
+    @GetMapping("/posts/{email}")
+    private ModelAndView getPostByEmail(@PathVariable String email, String userEmail) {
+        User endUser = userDao.readByEmail(email);
+        User user = userDao.readByEmail(userEmail);
+        if (endUser != null && user != null) {
+            List<Post> allPostByEmail = getAllPostByEmail(email);
+            List<Friend> friends = friendDao.readAll(endUser.getId());
+            long friendBlocked_status = friends.stream().filter(friend -> friend.getFriendId() == user.getId() && !friend.isBlocked()).count();
+            if ("PUBLIC".equals(endUser.getUserPostVisibility()) && (friendBlocked_status > 0 || friends.size() == 0)) {
+                if (allPostByEmail.size() > 0) {
+                    ModelAndView modelAndView = new ModelAndView("posts");
+                    modelAndView.getModel().put("posts", allPostByEmail);
+                    return modelAndView;
+                }
+                return errorMessageModelAndView("not post available yet");
+            } else {
+                if (friendBlocked_status > 0) {
+                    if (allPostByEmail.size() > 0) {
+                        ModelAndView modelAndView = new ModelAndView("posts");
+                        modelAndView.getModel().put("posts", allPostByEmail);
+                        return modelAndView;
+                    }
+                    return errorMessageModelAndView("your friend didn't posted yet anything");
+                }
             }
-            return errorMessageModelAndView("not post available yet");
+            return errorMessageModelAndView("you are not allowed ");
         }
         return errorMessageModelAndView("email Not found");
+    }
+
+    @PutMapping("/user/block/{email}")
+    public ModelAndView blockUser(@PathVariable String email, String userEmail) {
+        User endUser = userDao.readByEmail(email);
+        User user = userDao.readByEmail(userEmail);
+        if (endUser != null && user != null) {
+            Optional<Friend> friend = friendDao.readAll(user.getId()).stream().filter(friend_ -> friend_.getFriendId() == endUser.getId()).findFirst();
+            if (friend.isPresent()) {
+                Friend friendToBlock = friend.get();
+                friendDao.blockFriend(friendToBlock.getFriendId());
+                errorMessageModelAndView(" friend : " + endUser.getName() + " is blocked");
+            }
+            return errorMessageModelAndView("you can't block");
+        }
+        return errorMessageModelAndView("invalid data ");
+    }
+
+    private List<Post> getAllPostByEmail(String email) {
+        return postDao.findAllPostByEmail(email);
     }
 
     private boolean containsInvalidChars(String name) {

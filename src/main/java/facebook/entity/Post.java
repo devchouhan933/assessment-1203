@@ -28,13 +28,7 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", post='" + post + '\'' +
-                ", email='" + email + '\'' +
-                ", timestamp=" + timestamp +
-                ", user=" + user +
-                '}';
+        return "Post{" + "id=" + id + ", post='" + post + '\'' + ", email='" + email + '\'' + ", timestamp=" + timestamp + ", user=" + user + '}';
     }
 
     public String getEmail() {
@@ -49,16 +43,16 @@ public class Post {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getpost() {
         return post;
     }
 
     public void setpost(String post) {
         this.post = post;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Timestamp getTimestamp() {

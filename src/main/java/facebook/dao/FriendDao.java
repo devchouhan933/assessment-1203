@@ -10,4 +10,5 @@ public interface FriendDao {
     void create(Friend friend);
 
     void createMultiple(int id, Friend friend);
+    void  blockFriend(Integer id);
 }

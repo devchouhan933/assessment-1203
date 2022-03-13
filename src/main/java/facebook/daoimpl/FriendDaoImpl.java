@@ -42,4 +42,14 @@ public class FriendDaoImpl implements FriendDao {
         session.getTransaction().commit();
     }
 
+    @Override
+    public void blockFriend(Integer id) {
+
+        String SQL = "UPDATE `Friend`\n" +
+                "SET\n" +
+                "`blocked` = "+ true+
+                " WHERE `id` = "+ id;
+
+    }
+
 }

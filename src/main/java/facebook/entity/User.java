@@ -4,8 +4,7 @@ import javax.persistence.*;
 
 @Entity(name = "User")
 @Table(name = "user_spring")
-public
-class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +13,7 @@ class User {
     private String name;
     private String email;
     private String password;
+    private String userPostVisibility = "PUBLIC";
 
     public User() {
     }
@@ -26,12 +26,15 @@ class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\'' + ", password='" + password + '\'' + ", userPostVisibility='" + userPostVisibility + '\'' + '}';
+    }
+
+    public String getUserPostVisibility() {
+        return userPostVisibility;
+    }
+
+    public void setUserPostVisibility(String userPostVisibility) {
+        this.userPostVisibility = userPostVisibility;
     }
 
     public Integer getId() {
