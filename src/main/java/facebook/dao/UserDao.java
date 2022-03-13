@@ -12,5 +12,6 @@ public interface UserDao {
     List<User> read();
 
     User readByEmail(String email);
+  void  updateVisibility(String  visibility , Integer user_id);
 }
 

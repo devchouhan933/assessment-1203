@@ -4,19 +4,8 @@
         <p>{{user.email}}</p>
         <p> {{post}}</p>
     {{/posts}}
-    <form action="/post" method="post">
-        <label for="email">Email:</label><br>
-        <input type="text" name="email"><br>
-
-        <label for="password">Password:</label><br>
-        <input type="password" name="password"><br>
-
-
-        <label for="post">post:</label><br>
-        <textarea name="post">
-        </textarea>
-        <br>
-
+    <form action="/users" method="get">
+        <input type="hidden" name="email" value={{userEmail}}>
         <input type="submit"/>
     </form>
 </div>

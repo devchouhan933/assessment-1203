@@ -1,6 +1,7 @@
 package facebook.entity;
 
 import javax.persistence.*;
+
 @Entity(name = "Friend")
 @Table(name = "friend_spring")
 public class Friend {
@@ -12,6 +13,8 @@ public class Friend {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(updatable = true)
+    private boolean blocked = false;
 
     public Friend(Integer id, Integer friendId, User user, boolean blocked) {
         this.id = id;
@@ -20,15 +23,6 @@ public class Friend {
         this.blocked = blocked;
     }
 
-    public boolean isBlocked() {
-        return blocked;
-    }
-
-    public void setBlocked(boolean blocked) {
-        this.blocked = blocked;
-    }
-
-    private boolean blocked  = false;
     public Friend(Integer friendId, User user) {
         this.friendId = friendId;
         this.user = user;
@@ -41,6 +35,14 @@ public class Friend {
         this.id = id;
         this.friendId = friendId;
         this.user = user;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     @Override

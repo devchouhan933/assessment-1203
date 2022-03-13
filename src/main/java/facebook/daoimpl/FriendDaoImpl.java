@@ -4,6 +4,7 @@ import facebook.dao.FriendDao;
 import facebook.entity.Friend;
 import facebook.entity.User;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,12 +45,15 @@ public class FriendDaoImpl implements FriendDao {
 
     @Override
     public void blockFriend(Integer id) {
-
-        String SQL = "UPDATE `Friend`\n" +
-                "SET\n" +
-                "`blocked` = "+ true+
-                " WHERE `id` = "+ id;
-
+        session.beginTransaction();
+        String SQL = "UPDATE Friend SET blocked = :true   WHERE id = :id";
+        Query query = session.createQuery(SQL);
+        query.setParameter("true", true);
+        query.setParameter("id", id);
+        int i = query.executeUpdate();
+        //   int i = session.createQuery(SQL, Friend.class).executeUpdate();
+        session.getTransaction().commit();
+        System.out.println(i + " " + id);
     }
 
 }

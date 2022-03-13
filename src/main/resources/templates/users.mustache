@@ -2,14 +2,27 @@
     <h1>List of users</h1>
     {{#users}}
         <h1>USER</h1>
-       name:     {{name}}
-          email:   {{email}}
+        name:     {{name}}
+        email:   {{email}}
         <form method="post" action="/friend">
-
             <input type="hidden" name="userEmail" value={{userEmail}}>
             <input type="hidden" name="password" value={{userPassword}}>
             <input type="hidden" name="friendEmail" value={{email}}>
             <input type="submit" value="Friend">
         </form>
+
+        <form method="post" action="/block">
+            <input type="hidden" name="userEmail" value={{userEmail}}>
+            <input type="hidden" name="userPassword" value={{userPassword}}>
+            <input type="hidden" name="email" value={{email}}>
+
+            <input type="submit" value="block">
+        </form>
+
+        <form method="get" action="/posts/{{email}}">
+            <input type="hidden" name="userEmail" value={{userEmail}}>
+            <input type="submit" value="posts">
+        </form>
+
     {{/users}}
 </div>

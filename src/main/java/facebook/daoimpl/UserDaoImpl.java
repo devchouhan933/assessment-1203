@@ -3,10 +3,10 @@ package facebook.daoimpl;
 import facebook.dao.UserDao;
 import facebook.entity.User;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +51,17 @@ public class UserDaoImpl implements UserDao {
         query.setParameter("email", email);
 
         return (User) query.getSingleResult();*/
+    }
+
+    @Override
+    public void updateVisibility(String visibility, Integer user_id) {
+        session.beginTransaction();
+        String SQL = "UPDATE User SET userPostVisibility =:visibility   WHERE id = :user_id";
+        Query query = session.createQuery(SQL);
+        query.setParameter("visibility", visibility);
+        query.setParameter("user_id", user_id);
+        int i = query.executeUpdate();
+        session.getTransaction().commit();
     }
 
 }
