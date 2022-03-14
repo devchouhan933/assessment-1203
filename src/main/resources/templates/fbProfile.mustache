@@ -1,0 +1,27 @@
+<div>
+    <h1>User Profile</h1>
+    <p>Name: &nbsp;{{name}}</p>
+    <p>Email Id: &nbsp;{{email}}</p>
+    <form action="/posts" method="get">
+        <input hidden name="email" value={{email}}>
+        <input value="posts" type="submit"/>
+    </form>
+    <form action="/settingForm">
+        <input hidden name="email" value={{email}}>
+        <input value="setting" type="submit"/>
+    </form>
+    <form action="/posts/{{email}}" method="get">
+        <input value="your posts" type="submit"/>
+    </form>
+
+    <form action="/postForm" method="get">
+        <input hidden name="email" value={{email}}>
+
+        <input value="Create Post" type="submit"/>
+    </form>
+
+    <form action="/users" method="get">
+        <input hidden name="email" value={{email}}>
+        <input value="users" type="submit"/>
+    </form>
+</div>
