@@ -20,9 +20,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 public class ControllerApi {
-    //private final Map<String, User> userProfile = new HashMap<>();
     @Autowired
     private UserDao userDao;
     @Autowired
